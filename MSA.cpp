@@ -10,12 +10,19 @@
 #define GAP "-"
 
 int edit_distance(const std::string &token1, const std::string &token2) {
+    /*
+     * Calculate the edit distance using Levenshtein Distance by dynamic programming
+     *
+     * @param token1: the first token used to calculate edit distance
+     * @param token2: the second token used to calculate edit distance
+     * @return: score of edit distance as integer
+     */
     if (token1 == token2) {
         return 0;
     }
-//    int matrix[token1.length() + 1][token2.length() + 1]; // use this if compile with GCC not MSVC for better performance
-//    std::fill(&matrix[0][0], &matrix[0][0] + sizeof(matrix) / sizeof(int), 0); // use this if compile with GCC not MSVC for better performance
-    std::vector<std::vector<int>> matrix(token1.length() + 1, std::vector<int>(token2.length() + 1, 0)); // use this or pointers if compile with MSVC
+    int matrix[token1.length() + 1][token2.length() + 1]; // use this if compile with GCC not MSVC for better performance
+    std::fill(&matrix[0][0], &matrix[0][0] + sizeof(matrix) / sizeof(int), 0); // use this if compile with GCC not MSVC for better performance
+//    std::vector<std::vector<int>> matrix(token1.length() + 1, std::vector<int>(token2.length() + 1, 0)); // use this or pointers if compile with MSVC
     for (int i = 1; i < token1.length() + 1; ++i) {
         matrix[i][0] = i;
     }
@@ -214,26 +221,26 @@ std::vector<std::vector<std::string>> multi_sequence_alignment(const std::vector
     return align_sequence;
 }
 
-int main() {
-    auto start = std::chrono::high_resolution_clock::now();
-    std::vector<std::string> hypo{"ok", "I", "am", "a", "fish", "Are", "you", "Hello", "there", "How", "are", "you", "ok"};
-    std::vector<std::vector<std::string>> ref{
-            {"I", "am", "a", "fish"},
-            {"Are", "you"},
-            {"ok"},
-            {"Hello", "there"},
-            {"How", "are", "you"}
-    };
-    auto result = multi_sequence_alignment(hypo, ref);
-    auto end = std::chrono::high_resolution_clock::now();
-
-    for (const auto& sequence: result) {
-        for (const auto& token: sequence) {
-            std::cout << token << " ";
-        }
-        std::cout << std::endl;
-    }
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "time: " << duration.count() << std::endl;
-    return 0;
-}
+//int main() {
+//    auto start = std::chrono::high_resolution_clock::now();
+//    std::vector<std::string> hypo{"ok", "I", "am", "a", "fish", "Are", "you", "Hello", "there", "How", "are", "you", "ok"};
+//    std::vector<std::vector<std::string>> ref{
+//            {"I", "am", "a", "fish"},
+//            {"Are", "you"},
+//            {"ok"},
+//            {"Hello", "there"},
+//            {"How", "are", "you"}
+//    };
+//    auto result = multi_sequence_alignment(hypo, ref);
+//    auto end = std::chrono::high_resolution_clock::now();
+//
+//    for (const auto& sequence: result) {
+//        for (const auto& token: sequence) {
+//            std::cout << token << " ";
+//        }
+//        std::cout << std::endl;
+//    }
+//    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+//    std::cout << "time: " << duration.count() << std::endl;
+//    return 0;
+//}
