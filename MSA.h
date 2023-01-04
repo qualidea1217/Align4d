@@ -6,6 +6,12 @@
 #ifndef MSA_MSA_H
 #define MSA_MSA_H
 
+#define FULLY_MATCH_SCORE 2
+#define PARTIAL_MATCH_SCORE 1
+#define MISMATCH_SCORE (-1)
+#define GAP_SCORE (-1)
+#define GAP "-"
+
 int edit_distance(const std::string &, const std::string &);
 
 int compare(const std::string &, const std::vector<std::string> &);

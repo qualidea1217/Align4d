@@ -3,11 +3,7 @@
 #include <iostream>
 #include <numeric>
 
-#define FULLY_MATCH_SCORE 2
-#define PARTIAL_MATCH_SCORE 1
-#define MISMATCH_SCORE (-1)
-#define GAP_SCORE (-1)
-#define GAP "-"
+#include "MSA.h"
 
 int edit_distance(const std::string &token1, const std::string &token2) {
     /*
@@ -145,14 +141,14 @@ std::vector<std::string> get_compare_parameter(const std::vector<int>& current_i
 }
 
 size_t get_index(const std::vector<int>& current_index, const std::vector<int>& matrix_size) {
-    int index{0};
+    size_t index{0};
     for (int i = 0; i < matrix_size.size(); ++i) {
         if (current_index[i] != 0) {
-            int temp{1};
+            size_t temp{1};
             for (int j = i + 1; j < matrix_size.size(); ++j) {
                 temp *= matrix_size[j];
             }
-            index +=current_index[i] * temp;
+            index += current_index[i] * temp;
         }
     }
     return index;
@@ -170,6 +166,7 @@ std::vector<std::vector<std::string>> multi_sequence_alignment(const std::vector
         matrix_size.emplace_back(speaker.size() + 1);
         total_cell *= speaker.size() + 1;
     }
+    std::cout << "total cell: " << total_cell << " speaker num: " << reference.size();
     std::vector<int> score(total_cell);
 
     // computing score

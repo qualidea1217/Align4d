@@ -1,10 +1,10 @@
 #include <algorithm>
-#include <fstream>
 #include <iostream>
 #include <set>
-#include <sstream>
 #include <string>
 #include <vector>
+
+#include "ProcessText.h"
 
 std::vector<std::vector<std::string>> read_csv(const std::string& file_name) {
     /*
@@ -40,6 +40,12 @@ std::vector<std::string> get_total_hypothesis(const std::vector<std::vector<std:
 std::vector<std::vector<std::string>> get_total_reference_with_label(const std::vector<std::vector<std::string>>& content, int reference_token_line, int speaker_label_line) {
     std::vector<std::vector<std::string>> output{content[reference_token_line], content[speaker_label_line]};
     return output;
+}
+
+std::vector<std::string> get_unique_speaker_label(const std::vector<std::string>& speaker_labels) {
+    std::set<std::string> unique_speaker_label_set(speaker_labels.begin(), speaker_labels.end());
+    std::vector<std::string> unique_speaker_labels(unique_speaker_label_set.begin(), unique_speaker_label_set.end());
+    return unique_speaker_labels;
 }
 
 std::vector<std::vector<int>> get_segment_index(const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference, int segment_length, int barrier_length) {
@@ -79,13 +85,30 @@ std::vector<std::vector<int>> get_segment_index(const std::vector<std::string>& 
     return segment_index;
 }
 
-std::vector<std::vector<std::string>> separate_reference(const std::vector<std::string>& tokens, const std::vector<std::string>& speaker_labels) {
-    std::set<std::string> unique_speaker_label_set(speaker_labels.begin(), speaker_labels.end());
-    std::vector<std::string> unique_speaker_labels(unique_speaker_label_set.begin(), unique_speaker_label_set.end());
-    std::vector<std::vector<std::string>> reference(unique_speaker_label_set.size());
+std::vector<std::vector<std::string>> get_segment_sequence(const std::vector<std::string>& tokens, const std::vector<int>& segment_index) {
+    std::vector<std::vector<std::string>> segments;
+    for (int i = 0; i < segment_index.size() - 1; ++i) {
+        segments.emplace_back(tokens.begin() + segment_index[i], tokens.begin() + segment_index[i + 1]);
+    }
+    return segments;
+}
+
+std::vector<std::vector<std::string>> get_separate_sequence(const std::vector<std::string>& tokens, const std::vector<std::string>& speaker_labels) {
+    std::vector<std::string> unique_speaker_labels = get_unique_speaker_label(speaker_labels);
+    std::vector<std::vector<std::string>> reference(unique_speaker_labels.size());
     for (int i = 0; i < tokens.size(); ++i) {
         reference[std::ranges::find(unique_speaker_labels, speaker_labels[i]) - unique_speaker_labels.begin()].emplace_back(tokens[i]);
     }
+    return reference;
+}
+
+std::vector<std::vector<std::string>> get_separate_sequence_with_label(const std::vector<std::string>& tokens, const std::vector<std::string>& speaker_labels) {
+    std::vector<std::string> unique_speaker_labels = get_unique_speaker_label(speaker_labels);
+    std::vector<std::vector<std::string>> reference(unique_speaker_labels.size());
+    for (int i = 0; i < tokens.size(); ++i) {
+        reference[std::ranges::find(unique_speaker_labels, speaker_labels[i]) - unique_speaker_labels.begin()].emplace_back(tokens[i]);
+    }
+    reference.emplace_back(unique_speaker_labels);
     return reference;
 }
 
