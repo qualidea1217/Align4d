@@ -7,7 +7,7 @@
 #include "ProcessText.h"
 
 int main() {
-    std::string file_name{"../data/Bdb001_all_tokens.csv"};
+    std::string file_name{"../data/Bed002_all_tokens.csv"};
     std::vector<std::vector<std::string>> content = read_csv(file_name);
     std::vector<std::string> hypothesis = get_total_hypothesis(content, 2);
     std::vector<std::vector<std::string>> reference_with_label = get_total_reference_with_label(content, 0, 1);
@@ -15,14 +15,36 @@ int main() {
     std::vector<std::string> reference_label = reference_with_label[1];
     std::vector<std::string> unique_speaker_label = get_unique_speaker_label(reference_with_label[1]);
 
-    std::vector<std::vector<int>> segment_index = get_segment_index(hypothesis, reference, 100, 6);
+    std::vector<std::vector<int>> segment_index = get_segment_index(hypothesis, reference, 60, 6);
     std::vector<std::vector<std::string>> segmented_hypothesis_list = get_segment_sequence(hypothesis, segment_index[0]);
     std::vector<std::vector<std::string>> segmented_reference_list = get_segment_sequence(reference, segment_index[1]);
     std::vector<std::vector<std::string>> segmented_reference_label_list = get_segment_sequence(reference_label, segment_index[1]);
 
+//    for (int i = 30; i < 120; ++i) {
+//        segment_index = get_segment_index(hypothesis, reference, i, 6);
+//        int hypo_max{0}, ref_max{0}, hypo_max_index{0}, ref_max_index{0};
+//        for (int j = 0; j < segment_index[0].size() - 1; ++j) {
+//            int hypo_index_diff = segment_index[0][j + 1] - segment_index[0][j];
+//            int ref_index_diff = segment_index[1][j + 1] - segment_index[1][j];
+//            if (hypo_index_diff > hypo_max) {
+//                hypo_max = hypo_index_diff;
+//                hypo_max_index = j;
+//            }
+//            if (ref_index_diff > ref_max) {
+//                ref_max = ref_index_diff;
+//                ref_max_index = j;
+//            }
+//        }
+//        std::cout << "i: " << i << " hypo max: " << hypo_max << " at segment: " << hypo_max_index << " ref max: " << ref_max << " at segment: " << ref_max_index << std::endl;
+//    }
+
+    for (int i = 0; i < segment_index[0].size() - 1; ++i) {
+        std::cout << "segment hypo: " << segment_index[0][i + 1] - segment_index[0][i] << " segment ref: " << segment_index[1][i + 1] - segment_index[1][i] << std::endl;
+    }
     std::vector<std::vector<std::string>> final_result(unique_speaker_label.size() + 1);
     long long total_time{0};
     for (int i = 0; i < segmented_hypothesis_list.size(); ++i) {
+        std::cout << " segment from: " << segment_index[0][i] << " to: " << segment_index[0][i + 1];
         auto segment_hypothesis = segmented_hypothesis_list[i];
         auto separated_reference_with_label = get_separate_sequence_with_label(segmented_reference_list[i], segmented_reference_label_list[i]);
         std::vector<std::vector<std::string>> separated_reference(separated_reference_with_label.begin(), separated_reference_with_label.end() - 1);
@@ -47,8 +69,9 @@ int main() {
         }
     }
 
-    write_csv("../data/Bdb001_all_tokens_output2.csv", final_result);
+    write_csv("../data/Bed002_all_tokens_output.csv", final_result);
     std::cout << "total time: " << total_time << std::endl;
+
 
 //    auto start = std::chrono::high_resolution_clock::now();
 //    auto result = multi_sequence_alignment(hypothesis, reference);

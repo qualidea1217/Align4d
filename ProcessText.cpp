@@ -70,6 +70,9 @@ std::vector<std::vector<int>> get_segment_index(const std::vector<std::string>& 
     bool is_same_sequence;
     for (int i = segment_length; i < hypothesis.size() - barrier_length; ++i) {
         for (int j = ref_index.back(); j < reference.size() - barrier_length; ++j) {
+//            if (j - ref_index.back() > 5 * segment_length) {
+//                break;
+//            }
             is_same_sequence = std::equal(hypothesis.begin() + i, hypothesis.begin() + i + barrier_length, reference.begin() + j);
             if (is_same_sequence) {
                 hypo_index.emplace_back(i + (int)(barrier_length / 2));
