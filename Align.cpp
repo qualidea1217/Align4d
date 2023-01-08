@@ -15,7 +15,7 @@ int main() {
     std::vector<std::string> reference_label = reference_with_label[1];
     std::vector<std::string> unique_speaker_label = get_unique_speaker_label(reference_with_label[1]);
 
-    std::vector<std::vector<int>> segment_index = get_segment_index(hypothesis, reference, 60, 6);
+    std::vector<std::vector<int>> segment_index = get_segment_index(hypothesis, reference, 88, 6);
     std::vector<std::vector<std::string>> segmented_hypothesis_list = get_segment_sequence(hypothesis, segment_index[0]);
     std::vector<std::vector<std::string>> segmented_reference_list = get_segment_sequence(reference, segment_index[1]);
     std::vector<std::vector<std::string>> segmented_reference_label_list = get_segment_sequence(reference_label, segment_index[1]);
@@ -35,7 +35,8 @@ int main() {
 //                ref_max_index = j;
 //            }
 //        }
-//        std::cout << "i: " << i << " hypo max: " << hypo_max << " at segment: " << hypo_max_index << " ref max: " << ref_max << " at segment: " << ref_max_index << std::endl;
+//        std::cout << "i: " << i << " hypo max: " << hypo_max << " ref max: " << ref_max << std::endl;
+//        std::cout << hypo_max_index << " " << ref_max_index << std::endl;
 //    }
 
     for (int i = 0; i < segment_index[0].size() - 1; ++i) {

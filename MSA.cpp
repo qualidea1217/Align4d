@@ -87,29 +87,50 @@ std::vector<std::vector<int>> get_sequence_position_list(int speaker_sequence_le
 }
 
 std::vector<std::vector<int>> get_current_index(const std::vector<int>& position, const std::vector<int>& matrix_size) {
+    /*
+     * This function is only for demonstration, directly applying it will likely to cause memory overflow
+     * The equivalent logic of this function has been manually "inlined" into the multi-sequence-alignment
+     */
     int sequence_num = matrix_size.size();
     std::vector<std::vector<int>> current_list;
     std::vector<int> current;
-    for (int i = 0; i < sequence_num; ++i) {
-        if (std::ranges::find(position, i) == position.end()) {
-            current.emplace_back(0);
-        } else {
-            current.emplace_back(1);
-        }
-    }
-    while (true) {
-        current_list.emplace_back(current);
-        current[position.back()]++;
-        for (int i = position.size() - 1; i >= 0; i--) {
-            if (current[position[0]] == matrix_size[position[0]]) {
-                return current_list;
-            }
-            if (current[position[i]] == matrix_size[position[i]]) {
-                current[position[i - 1]]++;
-                current[position[i]] = 1;
+    try {
+        for (int i = 0; i < sequence_num; ++i) {
+            if (std::ranges::find(position, i) == position.end()) {
+                current.emplace_back(0);
+            } else {
+                current.emplace_back(1);
             }
         }
+        while (true) {
+            current_list.emplace_back(current);
+            current[position.back()]++;
+            for (int i = position.size() - 1; i >= 0; i--) {
+                if (current[position[0]] == matrix_size[position[0]]) {
+                    return current_list;
+                }
+                if (current[position[i]] == matrix_size[position[i]]) {
+                    current[position[i - 1]]++;
+                    current[position[i]] = 1;
+                }
+            }
+        }
+    } catch (std::bad_alloc const&) {
+        std::cout << "position: ";
+        for (auto i: position) {
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "matrix size: ";
+        for (auto i: matrix_size) {
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
+        std::cout << " out of memory" << std::endl;
+        std::cout << "size of current list: " << current_list.size() << std::endl;
+        exit(-1);
     }
+
 }
 
 std::vector<std::vector<int>> get_parameter_index_list(const std::vector<int>& sequence_position, const std::vector<int>& current_index) {
@@ -172,13 +193,21 @@ std::vector<std::vector<std::string>> multi_sequence_alignment(const std::vector
         std::cout << size << " ";
     }
     std::cout << " total cell: " << total_cell << " speaker num: " << reference.size();
-    std::vector<int> score(total_cell);
+    std::vector<int16_t> score(total_cell);
 //    auto score = std::make_unique<int[]>(total_cell);
 //    std::fill(&score[0], &score[total_cell - 1], 0);
 
     // computing score
     for (const std::vector<int>& sequence_position: get_sequence_position_list((int)speaker_sequence.size())) {
-        for (const std::vector<int>& current_index: get_current_index(sequence_position, matrix_size)) {
+        std::vector<int> current_index;
+        for (int i = 0; i < matrix_size.size(); ++i) {
+            if (std::ranges::find(sequence_position, i) == sequence_position.end()) {
+                current_index.emplace_back(0);
+            } else {
+                current_index.emplace_back(1);
+            }
+        }
+        while (true) {
             std::vector<int> parameter;
             for (const std::vector<int>& parameter_index: get_parameter_index_list(sequence_position, current_index)) {
                 std::vector<std::string> compare_parameter = get_compare_parameter(current_index, parameter_index, speaker_sequence);
@@ -187,8 +216,21 @@ std::vector<std::vector<std::string>> multi_sequence_alignment(const std::vector
                 parameter.emplace_back(score[get_index(parameter_index, matrix_size)] + compare(hypo, ref));
             }
             score[get_index(current_index, matrix_size)] = *std::ranges::max_element(parameter);
+            current_index[sequence_position.back()]++;
+            for (int i = sequence_position.size() - 1; i >= 0; i--) {
+                if (current_index[sequence_position[0]] == matrix_size[sequence_position[0]]) {
+                    goto new_sequence_position;
+                }
+                if (current_index[sequence_position[i]] == matrix_size[sequence_position[i]]) {
+                    current_index[sequence_position[i - 1]]++;
+                    current_index[sequence_position[i]] = 1;
+                }
+            }
         }
+        new_sequence_position:;
     }
+
+    std::cout << " cell max score: " << *std::ranges::max_element(score);
 
     // backtracking
     std::vector<std::vector<std::string>> align_sequence(speaker_sequence.size());
