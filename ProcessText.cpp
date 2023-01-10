@@ -130,3 +130,23 @@ void write_csv(const std::string& file_name, const std::vector<std::vector<std::
     }
     file.close();
 }
+
+void test_segment_parameter(int min_length, int max_length, int barrier_length, const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference) {
+    std::cout << "min segment length: " << min_length << " max segment length: " << max_length << " barrier length: " << barrier_length << std::endl;
+    std::vector<std::vector<int>> segment_index;
+    for (int i = min_length; i < max_length; ++i) {
+        segment_index = get_segment_index(hypothesis, reference, i, barrier_length);
+        int hypo_max{0}, ref_max{0};
+        for (int j = 0; j < segment_index[0].size() - 1; ++j) {
+            int hypo_index_diff = segment_index[0][j + 1] - segment_index[0][j];
+            int ref_index_diff = segment_index[1][j + 1] - segment_index[1][j];
+            if (hypo_index_diff > hypo_max) {
+                hypo_max = hypo_index_diff;
+            }
+            if (ref_index_diff > ref_max) {
+                ref_max = ref_index_diff;
+            }
+        }
+        std::cout << "segment length: " << i << " max hypothesis length: " << hypo_max << " max reference length: " << ref_max << std::endl;
+    }
+}

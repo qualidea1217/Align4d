@@ -20,25 +20,6 @@ int main() {
     std::vector<std::vector<std::string>> segmented_reference_list = get_segment_sequence(reference, segment_index[1]);
     std::vector<std::vector<std::string>> segmented_reference_label_list = get_segment_sequence(reference_label, segment_index[1]);
 
-//    for (int i = 30; i < 120; ++i) {
-//        segment_index = get_segment_index(hypothesis, reference, i, 6);
-//        int hypo_max{0}, ref_max{0}, hypo_max_index{0}, ref_max_index{0};
-//        for (int j = 0; j < segment_index[0].size() - 1; ++j) {
-//            int hypo_index_diff = segment_index[0][j + 1] - segment_index[0][j];
-//            int ref_index_diff = segment_index[1][j + 1] - segment_index[1][j];
-//            if (hypo_index_diff > hypo_max) {
-//                hypo_max = hypo_index_diff;
-//                hypo_max_index = j;
-//            }
-//            if (ref_index_diff > ref_max) {
-//                ref_max = ref_index_diff;
-//                ref_max_index = j;
-//            }
-//        }
-//        std::cout << "i: " << i << " hypo max: " << hypo_max << " ref max: " << ref_max << std::endl;
-//        std::cout << hypo_max_index << " " << ref_max_index << std::endl;
-//    }
-
     for (int i = 0; i < segment_index[0].size() - 1; ++i) {
         std::cout << "segment hypo: " << segment_index[0][i + 1] - segment_index[0][i] << " segment ref: " << segment_index[1][i + 1] - segment_index[1][i] << std::endl;
     }
