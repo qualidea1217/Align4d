@@ -37,6 +37,21 @@ int edit_distance(const std::string &token1, const std::string &token2) {
 }
 
 int compare(const std::string &hypothesis, const std::vector<std::string> &reference_list) {
+    /*
+     * Give score for comparison between hypothesis token and reference tokens
+     *
+     * The output score should obey the following hierarchy: (1 >= 2 > 3)
+     * 1. two normal tokens, one from hypothesis, one from reference, fully match, output FULLY_MATCH_SCORE
+     * 2. two normal tokens, one from hypothesis, one from reference, partially match, output PARTIAL_MATCH_SCORE
+     * 3. two normal tokens, one from hypothesis, one from reference, mis matched, output MISMATCH_SCORE
+     * 3. one normal token counted as a GAP situation, output GAP_SCORE
+     *
+     * @param hypothesis: token from hypothesis sequence used for comparison,
+     * this token can either be a normal token or a GAP defined as a macro.
+     * @param reference_list: vector of tokens from different separated reference sequence used for comparison,
+     * each token can either be a normal token or a GAP defined as a macro, there should be at most 1 normal token in the vector.
+     * @return: different score as an integer.
+     */
     std::string reference = GAP;
     for (const std::string &token: reference_list) {
         if (token != GAP) {
@@ -50,11 +65,11 @@ int compare(const std::string &hypothesis, const std::vector<std::string> &refer
     if (reference == GAP) {
         return GAP_SCORE;
     } else {
-        if (hypothesis == reference) {
+        if (hypothesis == reference) { // fully matched situation
             return FULLY_MATCH_SCORE;
-        } else if (edit_distance(hypothesis, reference) < 2) {
+        } else if (edit_distance(hypothesis, reference) < 2) { // partially matched situation
             return PARTIAL_MATCH_SCORE;
-        } else {
+        } else { // mis-matched
             return MISMATCH_SCORE;
         }
     }
@@ -62,6 +77,9 @@ int compare(const std::string &hypothesis, const std::vector<std::string> &refer
 
 void get_sequence_position_list_aux(const std::vector<int> &position, int size, int index,
                                     std::vector<std::vector<int>> &sequence_position, std::vector<int> &combination) {
+    /*
+     * Auxiliary recursive function for producing combinations using DFS method
+     */
     if (combination.size() == size) {
         sequence_position.emplace_back(combination);
         return;
@@ -74,6 +92,15 @@ void get_sequence_position_list_aux(const std::vector<int> &position, int size, 
 }
 
 std::vector<std::vector<int>> get_sequence_position_list(int speaker_sequence_length) {
+    /*
+     * Produce the position (index) of sequences that is needed to be compared.
+     * This function is equivalent to generate all combinations C(n, r) (also known as n choose r)
+     * with n = total number of sequence, and r = from 1 to total number of sequence.
+     *
+     * @param speaker_sequence_length: total number of sequence, which also speaker number + 1,
+     * this is also counted as 1 hypothesis sequence and all reference sequences separated by speaker
+     * @return: 2d vector of sequence positions, each sequence position is a vector of integers
+     */
     std::vector<int> position;
     for (int i = 0; i < speaker_sequence_length; ++i) {
         position.emplace_back(i);
