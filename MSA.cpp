@@ -99,7 +99,8 @@ std::vector<std::vector<int>> get_sequence_position_list(int speaker_sequence_le
      *
      * @param speaker_sequence_length: total number of sequence, which also speaker number + 1,
      * this is also counted as 1 hypothesis sequence and all reference sequences separated by speaker
-     * @return: 2d vector of sequence positions, each sequence position is a vector of integers
+     * @return: 2d vector of sequence positions, each sequence position is a vector of integers,
+     * indicating which sequence is involved in comparison
      */
     std::vector<int> position;
     for (int i = 0; i < speaker_sequence_length; ++i) {
@@ -161,6 +162,21 @@ std::vector<std::vector<int>> get_current_index(const std::vector<int>& position
 }
 
 std::vector<std::vector<int>> get_parameter_index_list(const std::vector<int>& sequence_position, const std::vector<int>& current_index) {
+    /*
+     * Generate index in scoring matrix for comparison based on the current index.
+     *
+     * For this multi-sequence alignment, based on the rules of comparison, we only consider two situations:
+     * 1. two normal tokens, one from hypothesis and one from reference
+     * 2. one normal token
+     * The number for the sequence that has the normal token will have -1 compared to the current index whereas other sequence will have normal index
+     * Example: for current index [2, 0, 3, 0, 0, 4] and sequence position [0, 2, 5]
+     * The index for comparison:
+     * [[1, 0, 3, 0, 0, 4], [2, 0, 2, 0, 0, 4], [2, 0, 3, 0, 0, 3], [1, 0, 2, 0, 0, 4], [1, 0, 3, 0, 0, 3]]
+     *
+     * @param sequence_position: vector of integers indicating which sequences are involved in comparison.
+     * @param current_index: vector of integers shows the current index need to be filled out.
+     * @return: 2d vector containing index in scoring matrix used as a parameter for comparison.
+     */
     std::vector<std::vector<int>> parameter_index_list;
     for (int index: sequence_position) {
         std::vector<int> single_token_index;
@@ -178,6 +194,16 @@ std::vector<std::vector<int>> get_parameter_index_list(const std::vector<int>& s
 }
 
 std::vector<std::string> get_compare_parameter(const std::vector<int>& current_index, const std::vector<int>& parameter_index, const std::vector<std::vector<std::string>>& speaker_sequence) {
+    /*
+     * Generate/Get tokens as the arguments for compare function based on the indexes for current cell
+     * and previous cell used for comparisons (dynamic programming).
+     *
+     * @param current_index: index for the current cell as vector of integers
+     * @param parameter_index: index for the previous cell as vector of integers
+     * @param speaker_sequence: 2d vector including actual sequences of tokens from hypothesis and separated reference,
+     * the first one will be the hypothesis sequence
+     * @return: vector of strings as the argument for compare function, the first one is the hypothesis token and the rest are for reference
+     */
     std::vector<std::string> compare_parameter;
     for (int i = 0; i < current_index.size(); ++i) {
         if (current_index[i] != parameter_index[i]) {
