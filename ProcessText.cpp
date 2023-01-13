@@ -8,7 +8,7 @@
 
 std::vector<std::vector<std::string>> read_csv(const std::string& file_name) {
     /*
-     * Process a csv file into nested vectors of strings
+     * Process a csv file into 2d vectors of strings
      *
      * @param file_name: file name as string
      * @return: 2d vector of strings, each vector of strings represent a row of csv file, each string is the content separated by comma
@@ -34,15 +34,34 @@ std::vector<std::vector<std::string>> read_csv(const std::string& file_name) {
 }
 
 std::vector<std::string> get_total_hypothesis(const std::vector<std::vector<std::string>>& content, int line) {
+    /*
+     * Get the line for hypothesis text sequence
+     *
+     * @param content: content of the csv file as 2d vector of strings
+     * @param line: line number of the hypothesis text sequence
+     * @return: hypothesis sequence as vector of string
+     */
     return content[line];
 }
 
 std::vector<std::vector<std::string>> get_total_reference_with_label(const std::vector<std::vector<std::string>>& content, int reference_token_line, int speaker_label_line) {
+    /*
+     * Get the line for reference text sequence and its related speaker label sequence
+     *
+     * @param content: content of the csv file as 2d vector of strings
+     * @param reference_token_line:
+     */
     std::vector<std::vector<std::string>> output{content[reference_token_line], content[speaker_label_line]};
     return output;
 }
 
 std::vector<std::string> get_unique_speaker_label(const std::vector<std::string>& speaker_labels) {
+    /*
+     * Generate vector of unique speaker labels by using set to remove duplicates
+     *
+     * @param speaker_labels: sequence of speaker labels in vector of strings
+     * @return: unique sequence of speaker labels
+     */
     std::set<std::string> unique_speaker_label_set(speaker_labels.begin(), speaker_labels.end());
     std::vector<std::string> unique_speaker_labels(unique_speaker_label_set.begin(), unique_speaker_label_set.end());
     return unique_speaker_labels;
@@ -89,6 +108,13 @@ std::vector<std::vector<int>> get_segment_index(const std::vector<std::string>& 
 }
 
 std::vector<std::vector<std::string>> get_segment_sequence(const std::vector<std::string>& tokens, const std::vector<int>& segment_index) {
+    /*
+     * Segment the sequence of tokens according to the provided index for segmentation
+     *
+     * @param tokens: sequence of tokens need to be segmented
+     * @param segment_index: indexes indicating where to do segmentation as vector of integers
+     * @return: segmented sequences as 2d vector of strings
+     */
     std::vector<std::vector<std::string>> segments;
     for (int i = 0; i < segment_index.size() - 1; ++i) {
         segments.emplace_back(tokens.begin() + segment_index[i], tokens.begin() + segment_index[i + 1]);

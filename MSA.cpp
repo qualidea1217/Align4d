@@ -216,6 +216,13 @@ std::vector<std::string> get_compare_parameter(const std::vector<int>& current_i
 }
 
 size_t get_index(const std::vector<int>& current_index, const std::vector<int>& matrix_size) {
+    /*
+     * Convert the multidimensional index to one dimensional index
+     *
+     * @param current_index: multidimensional index as vector of integer
+     * @param matrix_size: shape of the scoring matrix in multidimensional way (the length of each sequence)
+     * @return the one dimensional index representation correlated to the input multidimensional index
+     */
     size_t index{0};
     for (int i = 0; i < matrix_size.size(); ++i) {
         if (current_index[i] != 0) {
@@ -230,6 +237,16 @@ size_t get_index(const std::vector<int>& current_index, const std::vector<int>& 
 }
 
 std::vector<std::vector<std::string>> multi_sequence_alignment(const std::vector<std::string>& hypothesis, const std::vector<std::vector<std::string>>& reference) {
+    /*
+     * The actual function to do the multi-sequence alignment based on Needleman-Wunsch algorithm, a dynamic programming approach
+     * This algorithm expands the original Needleman-Wunsch algorithm to multidimensional way
+     * For the scoring matrix for dynamic programming, because it is hard to allocate for multidimensional array or vectors
+     * this implementation uses one dimensional vector of 2byte int with an index conversion function to mimic the multidimensional array
+     *
+     * @param hypothesis: sequence of tokens for hypothesis as vector of strings
+     * @param reference: sequences of tokens for separated references (by speaker) as 2d vector of strings
+     * @return: aligned hypothesis and separated references as 2d vector of strings
+     */
     std::vector<std::vector<std::string>> speaker_sequence;
     speaker_sequence.emplace_back(hypothesis);
     for (const std::vector<std::string>& ref: reference) {
