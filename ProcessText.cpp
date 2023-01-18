@@ -50,6 +50,8 @@ std::vector<std::vector<std::string>> get_total_reference_with_label(const std::
      *
      * @param content: content of the csv file as 2d vector of strings
      * @param reference_token_line:
+     * @return: 2d vector of string, the first vector is the reference token sequence,
+     * the second vector is the speaker label of the reference token
      */
     std::vector<std::vector<std::string>> output{content[reference_token_line], content[speaker_label_line]};
     return output;
@@ -82,6 +84,7 @@ std::vector<std::vector<int>> get_segment_index(const std::vector<std::string>& 
      * @param segment_length: length of each segment (around this value, mostly will be equal or greater) based on hypothesis segment
      * @param barrier_length: length of sequence that is used to determine the absolute correct point to chop the segment,
      * larger will create more accurate segmentation but will reduce number of segment and increase length of each segment
+     *
      * @return: 2d vector of int, including 2 vector of int, the first one is the index of segmentation of hypothesis,
      * the second one is for reference, including first and last index of the whole text
      */
@@ -132,6 +135,14 @@ std::vector<std::vector<std::string>> get_separate_sequence(const std::vector<st
 }
 
 std::vector<std::vector<std::string>> get_separate_sequence_with_label(const std::vector<std::string>& tokens, const std::vector<std::string>& speaker_labels) {
+    /*
+     * Separate the sequence to multiple sequences that each sequence are tokens from the same speaker
+     *
+     * @param tokens: sequence of tokens from multiple speakers
+     * @param speaker_labels: sequence of speaker labels, each speaker label is related to each token in the input tokens
+     * @return: 2d vector of strings, if there are n speakers in total, the output will be n+1 vectors,
+     * the front n sequences are separated tokens for each sequence, the last one is the vector of unique speaker labels in the input
+     */
     std::vector<std::string> unique_speaker_labels = get_unique_speaker_label(speaker_labels);
     std::vector<std::vector<std::string>> reference(unique_speaker_labels.size());
     for (int i = 0; i < tokens.size(); ++i) {
