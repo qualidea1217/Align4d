@@ -4,7 +4,8 @@
 #include <vector>
 
 #include "MSA.h"
-#include "ProcessText.h"
+#include "PreProcess.h"
+#include "PostProcess.h"
 
 int main() {
     std::string file_name{"../data/Bed002_all_tokens.csv"};

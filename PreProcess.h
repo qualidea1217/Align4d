@@ -23,8 +23,6 @@ std::vector<std::vector<std::string>> get_separate_sequence(const std::vector<st
 
 std::vector<std::vector<std::string>> get_separate_sequence_with_label(const std::vector<std::string>&, const std::vector<std::string>&);
 
-void write_csv(const std::string&, const std::vector<std::vector<std::string>>&);
-
 void test_segment_parameter(int, int, int, const std::vector<std::string>&, const std::vector<std::string>&);
 
 #endif //MSA_PROCESSTEXT_H

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "ProcessText.h"
+#include "PreProcess.h"
 
 std::vector<std::vector<std::string>> read_csv(const std::string& file_name) {
     /*
@@ -150,22 +150,6 @@ std::vector<std::vector<std::string>> get_separate_sequence_with_label(const std
     }
     reference.emplace_back(unique_speaker_labels);
     return reference;
-}
-
-void write_csv(const std::string& file_name, const std::vector<std::vector<std::string>>& content) {
-    std::ofstream file;
-    file.open(file_name);
-    if (file.is_open()) {
-        for (const auto& row: content) {
-            for (const auto& token: row) {
-                file << token << ",";
-            }
-            file << std::endl;
-        }
-    } else {
-        throw std::runtime_error("Could not open the file");
-    }
-    file.close();
 }
 
 void test_segment_parameter(int min_length, int max_length, int barrier_length, const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference) {
