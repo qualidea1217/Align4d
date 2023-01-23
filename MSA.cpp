@@ -2,7 +2,6 @@
 #include <chrono>
 #include <iostream>
 #include <numeric>
-#include <memory>
 
 #include "MSA.h"
 
