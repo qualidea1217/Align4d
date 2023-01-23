@@ -30,36 +30,44 @@ def get_speaker_mapping(hyp_spk_labels, ref_spks_alignments) -> dict:
   Returns:
       dict: map from ref to hyp
   """
-  # TODO: some speakers in ref might aligned to the same speaker in hyp, compare between speakers
-  hyp_spk_set = set(hyp_spk_labels)
-  reference_speaker = 0
-  speaker_alignment = {}
-  for aligned_indices in ref_spks_alignments: # iterate throught each speaker sequence's aligned result
-    max_matched_indices = 0
-    for hyp_spk in hyp_spk_set:
-      hyp_indices = [index for (index, item) in enumerate(hyp_spk_labels) if item == hyp_spk] 
-      matched_indices = len(set(aligned_indices) & set(hyp_indices))
-      if matched_indices > max_matched_indices:
-        max_matched_indices = matched_indices
-        speaker_alignment[hyp_spk] = reference_speaker
-    reference_speaker += 1 # next reference speakers
-
+  cost_matrix = build_cost_matrix(hyp_spk_labels, ref_spks_alignments)
+  row_index, col_index = optimize.linear_sum_assignment(-cost_matrix) # linear_sum_assignment wants the minimum cost, here we want the largest
+  speaker_alignment = {ref_id: hyp_id for ref_id, hyp_id in enumerate(col_index)}
   return speaker_alignment
 
-      
-      
-
-def get_spk_set(spk_labels):
-  """_summary_
+def build_speaker_index(hyp_spk_labels):
+  """create a speaker index mapping for all speakers
 
   Args:
-      spk_labels (list): a list stores each token's speaker label for
+      hyp_spk_labels : a list of hyp speaker labels for each token in the hyp sequence
 
   Returns:
-      set: a set with all speaker ids
+      a dict from speaker to index
   """
-  spk_set = set()
-  return spk_set
+  hyp_spk_set = sorted(set(hyp_spk_labels))
+  index = {spkID: i for i, spkID in enumerate(hyp_spk_set)}
+  return index
+
+def build_cost_matrix(hyp_spk_labels, ref_sequences):
+  """Build the cost matrix for linear sum assignment to match speakers
+
+  Args:
+      hyp_spk_label : a list of hyp speaker labels for each token in the hyp sequence
+      ref_sequences : a list of multiple sequences each sequence represents one of the hyp speakers, 
+                      each sequence stores the token to token aligned indices to target sequence
+  Returns:
+        cost_matrix: a 2-dnumpy array, whose element (i, j) is the number of aligned indices of
+            `i`th ref speaker and `j`th hyp speaker
+  """
+  hyp_spk_set = set(hyp_spk_labels)
+  hyp_spk_index = build_speaker_index(hyp_spk_labels=hyp_spk_labels)
+  cost_matrix = np.zeros((len(ref_sequences), len(hyp_spk_set)))
+  for ref_spk, aligned_indices in enumerate(ref_sequences):
+    for hyp_spk in hyp_spk_set:
+      hyp_indices = [index for (index, item) in enumerate(hyp_spk_labels) if item == hyp_spk] 
+      cost_matrix[ref_spk, hyp_spk_index[hyp_spk]] += len(set(aligned_indices) & set(hyp_indices))
+  return cost_matrix
+
 
 def get_hyp_aligned_refSpearkerLables(ref_spks_alignments, hyp_length) -> list:
   """having the aligned sequence for each ref speaker, return the list of ref speaker labels for each hyp token
@@ -83,18 +91,27 @@ def WDER(hyp_spk_labels, ref_spks_alignments):
   the error rate amoung aligned tokens (not including gaps)
   """
   # TODO: -1/0 stands for gap here, should we also account for missmatch
+  hyp_spk_index = build_speaker_index(hyp_spk_labels)
   speaker_alignment = get_speaker_mapping(hyp_spk_labels=hyp_spk_labels, ref_spks_alignments=ref_spks_alignments)
   hyp_aligned_ref_spkIDs = get_hyp_aligned_refSpearkerLables(ref_spks_alignments=ref_spks_alignments, hyp_length=len(hyp_spk_labels))
   incorrect_num = 0
   for index, ref_spk in enumerate(hyp_aligned_ref_spkIDs):
-    if ref_spk != -1 and speaker_alignment[ref_spk] != hyp_spk_labels[index]:
+    if ref_spk != -1 and speaker_alignment[ref_spk] != hyp_spk_index[hyp_spk_labels[index]]:
       incorrect_num += 1
   
-  WDER_score = incorrect_num/len([spk for spk in hyp_spk_labels if spk != -1])
-      
+  WDER_score = incorrect_num/len([spk for spk in hyp_aligned_ref_spkIDs if spk != -1])
   return WDER_score
 
+def WJER(hyp_spk_labels, ref_spks_alignments):
+  """Word-level Jaccard error rate
 
+  Args:
+      hyp_spk_labels (_type_): _description_
+      ref_spks_alignments (_type_): _description_
+  """
+  pass
+
+  
 
 if __name__ == "__main__":
   pass
