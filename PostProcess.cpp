@@ -26,7 +26,7 @@ std::vector<std::string> get_token_match_result(const std::vector<std::vector<st
      * Get the match result (fully match, partially match, mismatch, gap) for each position of token after alignment
      * The rule of comparison must be the same as compare function in MSA
      *
-     * @param final_result: final output of the alignment with just the aligned sequences
+     * @param final_result: final output of the alignment with just the aligned sequences from multi_sequence_alignment
      * @return: match result for each position of token specified in strings
      */
     std::vector<std::string> token_match_result;
@@ -50,6 +50,31 @@ std::vector<std::string> get_token_match_result(const std::vector<std::vector<st
         }
     }
     return token_match_result;
+}
+
+std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<std::string>>& final_result) {
+    /*
+     * Get the indexes representing the mapping from each token in the separated reference sequences to the hypothesis.
+     *
+     * Each index shows the relative position (index) in the hypothesis sequence of the
+     * non-gap token (fully match, partially match, or mismatch) from the separated reference sequences.
+     * If the index is -1, it means that the current token does not aligned to any token in the hypothesis (align to a gap).
+     *
+     * @param final_result: final output of the alignment with just the aligned sequences from multi_sequence_alignment
+     * @return: indexes showing the mapping between tokens from separated reference to hypothesis
+     */
+    std::vector<std::vector<int>> align_indexes(final_result.size() - 1);
+    std::vector<std::string> align_hypo = final_result[0];
+    for (int i = 1; i < final_result.size(); ++i) {
+        std::vector<int> indexes;
+        for (int j = 0; j < align_hypo.size(); ++j) {
+            if (final_result[i][j] != GAP) {
+                indexes.emplace_back(align_hypo[j] != GAP ? j : -1);
+            }
+        }
+        align_indexes.emplace_back(indexes);
+    }
+    return align_indexes;
 }
 
 

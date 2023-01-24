@@ -8,6 +8,40 @@
 #ifndef MSA_POSTPROCESS_H
 #define MSA_POSTPROCESS_H
 
+template <typename T> T write_csv_single_line(const std::string& file_name, const T& row) {
+    std::ofstream file;
+    file.open(file_name);
+    if (file.is_open()) {
+        for (const auto& element: row) {
+            file << element << ",";
+        }
+        file << std::endl;
+    } else {
+        throw std::runtime_error("Could not open the file");
+    }
+    file.close();
+}
+
+template <typename T> T write_csv_multiple_line(const std::string& file_name, const T& content) {
+    std::ofstream file;
+    file.open(file_name);
+    if (file.is_open()) {
+        for (const auto& row: content) {
+            for (const auto& element: row) {
+                file << element << ",";
+            }
+            file << std::endl;
+        }
+    } else {
+        throw std::runtime_error("Could not open the file");
+    }
+    file.close();
+}
+
 void write_csv(const std::string&, const std::vector<std::vector<std::string>>&);
+
+std::vector<std::string> get_token_match_result(const std::vector<std::vector<std::string>>&);
+
+std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<std::string>>&);
 
 #endif //MSA_POSTPROCESS_H

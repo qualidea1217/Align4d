@@ -52,7 +52,13 @@ int main() {
         }
     }
 
-    write_csv("../data/Bed002_all_tokens_output.csv", final_result);
+    auto token_match_result = get_token_match_result(final_result);
+    auto align_indexes = get_align_indexes(final_result);
+
+
+    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/Bed002_test.csv", final_result);
+    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/Bed002_test.csv", align_indexes);
+    write_csv_single_line<std::vector<std::string>>("../data/Bed002_test.csv", token_match_result);
     std::cout << "total time: " << total_time << std::endl;
 
 
