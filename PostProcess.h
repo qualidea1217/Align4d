@@ -8,9 +8,9 @@
 #ifndef MSA_POSTPROCESS_H
 #define MSA_POSTPROCESS_H
 
-template <typename T> T write_csv_single_line(const std::string& file_name, const T& row) {
+template <typename T> void write_csv_single_line(const std::string& file_name, const T& row) {
     std::ofstream file;
-    file.open(file_name);
+    file.open(file_name, std::ios::app);
     if (file.is_open()) {
         for (const auto& element: row) {
             file << element << ",";
@@ -22,9 +22,9 @@ template <typename T> T write_csv_single_line(const std::string& file_name, cons
     file.close();
 }
 
-template <typename T> T write_csv_multiple_line(const std::string& file_name, const T& content) {
+template <typename T> void write_csv_multiple_line(const std::string& file_name, const T& content) {
     std::ofstream file;
-    file.open(file_name);
+    file.open(file_name, std::ios::app);
     if (file.is_open()) {
         for (const auto& row: content) {
             for (const auto& element: row) {

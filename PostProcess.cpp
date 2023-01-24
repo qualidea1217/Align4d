@@ -7,7 +7,7 @@
 
 void write_csv(const std::string& file_name, const std::vector<std::vector<std::string>>& content) {
     std::ofstream file;
-    file.open(file_name);
+    file.open(file_name, std::ios::app);
     if (file.is_open()) {
         for (const auto& row: content) {
             for (const auto& token: row) {
@@ -48,6 +48,7 @@ std::vector<std::string> get_token_match_result(const std::vector<std::vector<st
         } else {
             token_match_result.emplace_back("gap");
         }
+        compare_token.clear();
     }
     return token_match_result;
 }
@@ -63,7 +64,7 @@ std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<st
      * @param final_result: final output of the alignment with just the aligned sequences from multi_sequence_alignment
      * @return: indexes showing the mapping between tokens from separated reference to hypothesis
      */
-    std::vector<std::vector<int>> align_indexes(final_result.size() - 1);
+    std::vector<std::vector<int>> align_indexes;
     std::vector<std::string> align_hypo = final_result[0];
     for (int i = 1; i < final_result.size(); ++i) {
         std::vector<int> indexes;

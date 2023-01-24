@@ -61,14 +61,26 @@ int main() {
     write_csv_single_line<std::vector<std::string>>("../data/Bed002_test.csv", token_match_result);
     std::cout << "total time: " << total_time << std::endl;
 
-
+//    std::vector<std::string> hypo{"ok", "I", "am", "a", "fish", "Are", "you", "Hello", "there", "How", "are", "you", "ok"};
+//    std::vector<std::vector<std::string>> ref{
+//            {"I", "am", "a", "fish"},
+//            {"Are", "you"},
+//            {"ok"},
+//            {"Hello", "there"},
+//            {"How", "are", "you"}
+//    };
 //    auto start = std::chrono::high_resolution_clock::now();
-//    auto result = multi_sequence_alignment(hypothesis, reference);
+//    auto result = multi_sequence_alignment(hypo, ref);
 //    auto end = std::chrono::high_resolution_clock::now();
 //    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-//    std::cout << "time: " << duration.count() << std::endl;
+//    std::cout << "\ntime: " << duration.count() << std::endl;
 //
-//    write_csv("../data/test_output1.csv", result);
+//    auto token_match_result = get_token_match_result(result);
+//    auto align_indexes = get_align_indexes(result);
+//
+//    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/small_test.csv", result);
+//    write_csv_single_line<std::vector<std::string>>("../data/small_test.csv", token_match_result);
+//    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/small_test.csv", align_indexes);
 
     return 0;
 }
