@@ -9,6 +9,12 @@
 #define MSA_POSTPROCESS_H
 
 template <typename T> void write_csv_single_line(const std::string& file_name, const T& row) {
+    /*
+     * Write single row of content to a new or existing csv file
+     *
+     * @param file_name: path of the csv file
+     * @param row: content need to be written in csv, type has to be 1d structure that support range-based for loop
+     */
     std::ofstream file;
     file.open(file_name, std::ios::app);
     if (file.is_open()) {
@@ -23,6 +29,12 @@ template <typename T> void write_csv_single_line(const std::string& file_name, c
 }
 
 template <typename T> void write_csv_multiple_line(const std::string& file_name, const T& content) {
+    /*
+     * Write multiple rows of content to a new or existing csv file
+     *
+     * @param file_name: path of the csv file
+     * @param row: content need to be written in csv, type has to be 2d structure that support range-based for loop
+     */
     std::ofstream file;
     file.open(file_name, std::ios::app);
     if (file.is_open()) {
