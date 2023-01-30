@@ -61,6 +61,8 @@ std::vector<std::string> get_unique_speaker_label(const std::vector<std::string>
     /*
      * Generate vector of unique speaker labels by using set to remove duplicates
      *
+     * The actual implementation needs to be stable that giving the exact same output for the same input
+     *
      * @param speaker_labels: sequence of speaker labels in vector of strings
      * @return: unique sequence of speaker labels
      */

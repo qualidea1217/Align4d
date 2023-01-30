@@ -4,6 +4,7 @@
 
 #include "MSA.h"
 #include "PostProcess.h"
+#include "PreProcess.h"
 
 void write_csv(const std::string& file_name, const std::vector<std::vector<std::string>>& content) {
     std::ofstream file;
@@ -76,6 +77,15 @@ std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<st
         align_indexes.emplace_back(indexes);
     }
     return align_indexes;
+}
+
+std::vector<std::vector<int>> get_ref_original_index(const std::vector<std::string>& reference, const std::vector<std::string>& speaker_labels) {
+    std::vector<std::string> unique_speaker_labels = get_unique_speaker_label(speaker_labels);
+    std::vector<std::vector<int>> ref_original_index(unique_speaker_labels.size());
+    for (int i = 0; i < reference.size(); ++i) {
+        ref_original_index[std::ranges::find(unique_speaker_labels, speaker_labels[i]) - unique_speaker_labels.begin()].emplace_back(i);
+    }
+    return ref_original_index;
 }
 
 
