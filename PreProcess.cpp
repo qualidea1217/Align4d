@@ -173,3 +173,29 @@ void test_segment_parameter(int min_length, int max_length, int barrier_length, 
         std::cout << "segment length: " << i << " max hypothesis length: " << hypo_max << " max reference length: " << ref_max << std::endl;
     }
 }
+
+std::tuple<int, int> get_optimal_segment_parameter(const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference, int min_length, int max_length, int barrier_length) {
+    std::vector<std::vector<int>> segment_index;
+    int optimal_length{0}, hypo_ref_min_sum{INT_MAX};
+    for (int i = min_length; i < max_length; ++i) {
+        segment_index = get_segment_index(hypothesis, reference, i, barrier_length);
+        int hypo_max{0}, ref_max{0};
+        for (int j = 0; j < segment_index[0].size() - 1; ++j) {
+            int hypo_index_diff = segment_index[0][j + 1] - segment_index[0][j];
+            int ref_index_diff = segment_index[1][j + 1] - segment_index[1][j];
+            if (hypo_index_diff > hypo_max) {
+                hypo_max = hypo_index_diff;
+            }
+            if (ref_index_diff > ref_max) {
+                ref_max = ref_index_diff;
+            }
+        }
+        std::cout << "segment length: " << i << " max hypothesis length: " << hypo_max << " max reference length: " << ref_max << std::endl;
+        if (hypo_max + ref_max <= hypo_ref_min_sum) {
+            optimal_length = i;
+            hypo_ref_min_sum = hypo_max + ref_max;
+        }
+    }
+    std::cout << "optimal length: " << optimal_length << " optimal barrier length: " << barrier_length << std::endl;
+    return std::make_tuple(optimal_length, barrier_length);
+}

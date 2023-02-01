@@ -25,4 +25,6 @@ std::vector<std::vector<std::string>> get_separate_sequence_with_label(const std
 
 void test_segment_parameter(int, int, int, const std::vector<std::string>&, const std::vector<std::string>&);
 
+std::tuple<int, int> get_optimal_segment_parameter(const std::vector<std::string>&, const std::vector<std::string>&, int = 30, int = 120, int = 6);
+
 #endif //MSA_PROCESSTEXT_H
