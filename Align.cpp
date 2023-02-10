@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "Align.h"
 #include "MSA.h"
 #include "PreProcess.h"
 #include "PostProcess.h"
@@ -21,7 +22,7 @@ std::vector<std::vector<std::string>> align_without_segment(const std::vector<st
     return align_result;
 }
 
-std::vector<std::vector<std::string>> align_with_segment(const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference, const std::vector<std::string>& reference_label) {
+std::vector<std::vector<std::string>> align_with_auto_segment(const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference, const std::vector<std::string>& reference_label) {
     // get unique speaker labels
     std::vector<std::string> unique_speaker_label = get_unique_speaker_label(reference_label);
 
@@ -64,31 +65,73 @@ std::vector<std::vector<std::string>> align_with_segment(const std::vector<std::
     return align_result;
 }
 
+std::vector<std::vector<std::string>> align_with_manual_segment(const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference, const std::vector<std::string>& reference_label, int segment_length, int barrier_length) {
+    // get unique speaker labels
+    std::vector<std::string> unique_speaker_label = get_unique_speaker_label(reference_label);
+
+    // segment dialogue
+    std::vector<std::vector<int>> segment_index = get_segment_index(hypothesis, reference, segment_length, barrier_length);
+    std::vector<std::vector<std::string>> segmented_hypothesis_list = get_segment_sequence(hypothesis, segment_index[0]);
+    std::vector<std::vector<std::string>> segmented_reference_list = get_segment_sequence(reference, segment_index[1]);
+    std::vector<std::vector<std::string>> segmented_reference_label_list = get_segment_sequence(reference_label, segment_index[1]);
+
+    // align each segment separately, record time, and put all back together
+    std::vector<std::vector<std::string>> align_result(unique_speaker_label.size() + 1);
+    long long total_time{0};
+    for (int i = 0; i < segmented_hypothesis_list.size(); ++i) {
+        std::cout << " segment from: " << segment_index[0][i] << " to: " << segment_index[0][i + 1];
+        auto segment_hypothesis = segmented_hypothesis_list[i];
+        auto separated_reference_with_label = get_separate_sequence_with_label(segmented_reference_list[i], segmented_reference_label_list[i]);
+        std::vector<std::vector<std::string>> separated_reference(separated_reference_with_label.begin(), separated_reference_with_label.end() - 1);
+        std::vector<std::string> segment_reference_speaker_label = separated_reference_with_label.back();
+
+        auto start = std::chrono::high_resolution_clock::now();
+        auto result = multi_sequence_alignment(segment_hypothesis, separated_reference);
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+        std::cout << " segment time: " << duration.count() << std::endl;
+        total_time += duration.count();
+
+        align_result[0].insert(align_result[0].end(), result[0].begin(), result[0].end());
+        for (int j = 0; j < separated_reference.size(); ++j) {
+            int final_result_index = std::ranges::find(unique_speaker_label, segment_reference_speaker_label[j]) - unique_speaker_label.begin() + 1;
+            align_result[final_result_index].insert(align_result[final_result_index].end(), result[j + 1].begin(), result[j + 1].end());
+        }
+        for (int j = 1; j < align_result.size(); ++j) {
+            while (align_result[j].size() < align_result[0].size()) {
+                align_result[j].emplace_back(GAP);
+            }
+        }
+    }
+    std::cout << "total time: " << total_time << std::endl;
+    return align_result;
+}
+
 std::vector<std::vector<std::string>> align_from_csv(const std::string& input_file, int hypo_line, int ref_line, int ref_label_line) {
     std::vector<std::vector<std::string>> content = read_csv(input_file);
     std::vector<std::string> hypothesis = get_total_hypothesis(content, hypo_line);
     std::vector<std::vector<std::string>> reference_with_label = get_total_reference_with_label(content, ref_line, ref_label_line);
     std::vector<std::string> reference = reference_with_label[0];
     std::vector<std::string> reference_label = reference_with_label[1];
-    std::vector<std::vector<std::string>> align_result = align_with_segment(hypothesis, reference, reference_label);
+    std::vector<std::vector<std::string>> align_result = align_with_auto_segment(hypothesis, reference, reference_label);
     return align_result;
 }
 
 int main() {
-//    std::string file_name{"../data/example.csv"};
-//    std::vector<std::vector<std::string>> content = read_csv(file_name);
-//    std::vector<std::string> hypothesis = get_total_hypothesis(content, 0);
-//    std::vector<std::vector<std::string>> reference_with_label = get_total_reference_with_label(content, 3, 4);
-//    std::vector<std::string> reference = reference_with_label[0];
-//    std::vector<std::string> reference_label = reference_with_label[1];
-//    auto result = align_without_segment(hypothesis, reference, reference_label);
-//    auto token_match_result = get_token_match_result(result);
-//    auto align_indexes = get_align_indexes(result);
-//    auto ref_original_index = get_ref_original_index(reference, reference_label);
-//    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/example_output.csv", result);
-//    write_csv_single_line<std::vector<std::string>>("../data/example_output.csv", token_match_result);
-//    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/example_output.csv", align_indexes);
-//    write_csv_multiple_line("../data/example_output.csv", ref_original_index);
+    std::string file_name{"../data/example.csv"};
+    std::vector<std::vector<std::string>> content = read_csv(file_name);
+    std::vector<std::string> hypothesis = get_total_hypothesis(content, 0);
+    std::vector<std::vector<std::string>> reference_with_label = get_total_reference_with_label(content, 3, 4);
+    std::vector<std::string> reference = reference_with_label[0];
+    std::vector<std::string> reference_label = reference_with_label[1];
+    auto result = align_with_auto_segment(hypothesis, reference, reference_label);
+    auto token_match_result = get_token_match_result(result);
+    auto align_indexes = get_align_indexes(result);
+    auto ref_original_index = get_ref_original_index(reference, reference_label);
+    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/example_output.csv", result);
+    write_csv_single_line<std::vector<std::string>>("../data/example_output.csv", token_match_result);
+    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/example_output.csv", align_indexes);
+    write_csv_multiple_line("../data/example_output.csv", ref_original_index);
 
 
 //    std::vector<std::string> hypo{"ok", "I", "am", "a", "fish", "Are", "you", "Hello", "there", "How", "are", "you", "ok"};

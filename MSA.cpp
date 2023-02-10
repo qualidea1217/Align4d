@@ -16,9 +16,9 @@ int edit_distance(const std::string &token1, const std::string &token2) {
     if (token1 == token2) {
         return 0;
     }
-    int matrix[token1.length() + 1][token2.length() + 1]; // use this if compile with GCC not MSVC for better performance
-    std::fill(&matrix[0][0], &matrix[0][0] + sizeof(matrix) / sizeof(int), 0); // use this if compile with GCC not MSVC for better performance
-//    std::vector<std::vector<int>> matrix(token1.length() + 1, std::vector<int>(token2.length() + 1, 0)); // use this or pointers if compile with MSVC
+//    int matrix[token1.length() + 1][token2.length() + 1]; // use this if compile with GCC not MSVC for better performance
+//    std::fill(&matrix[0][0], &matrix[0][0] + sizeof(matrix) / sizeof(int), 0); // use this if compile with GCC not MSVC for better performance
+    std::vector<std::vector<int>> matrix(token1.length() + 1, std::vector<int>(token2.length() + 1, 0)); // use this or pointers if compile with MSVC
     for (int i = 1; i < token1.length() + 1; ++i) {
         matrix[i][0] = i;
     }
