@@ -106,8 +106,8 @@ std::vector<std::vector<int>> get_segment_index(const std::vector<std::string>& 
             }
         }
     }
-    hypo_index.emplace_back(hypothesis.size() - 1);
-    ref_index.emplace_back(reference.size() - 1);
+    hypo_index.emplace_back(hypothesis.size());
+    ref_index.emplace_back(reference.size());
     std::vector<std::vector<int>> segment_index{hypo_index, ref_index};
     return segment_index;
 }

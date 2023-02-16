@@ -118,40 +118,40 @@ std::vector<std::vector<std::string>> align_from_csv(const std::string& input_fi
 }
 
 int main() {
-    std::string file_name{"../data/example.csv"};
-    std::vector<std::vector<std::string>> content = read_csv(file_name);
-    std::vector<std::string> hypothesis = get_total_hypothesis(content, 0);
-    std::vector<std::vector<std::string>> reference_with_label = get_total_reference_with_label(content, 3, 4);
-    std::vector<std::string> reference = reference_with_label[0];
-    std::vector<std::string> reference_label = reference_with_label[1];
-    auto result = align_with_auto_segment(hypothesis, reference, reference_label);
-    auto token_match_result = get_token_match_result(result);
-    auto align_indexes = get_align_indexes(result);
-    auto ref_original_index = get_ref_original_index(reference, reference_label);
-    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/example_output.csv", result);
-    write_csv_single_line<std::vector<std::string>>("../data/example_output.csv", token_match_result);
-    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/example_output.csv", align_indexes);
-    write_csv_multiple_line("../data/example_output.csv", ref_original_index);
-
-
-//    std::vector<std::string> hypo{"ok", "I", "am", "a", "fish", "Are", "you", "Hello", "there", "How", "are", "you", "ok"};
-//    std::vector<std::string> ref{"I", "am", "a", "fish", "ok", "Are", "you", "Hello", "there", "How", "are", "you"};
-//    std::vector<std::string> ref_speaker_labels{"B", "B", "B", "B", "A", "C", "C", "D", "D", "E", "E", "E"};
-//    std::vector<std::vector<std::string>> separated_ref = get_separate_sequence(ref, ref_speaker_labels);
-//    auto start = std::chrono::high_resolution_clock::now();
-//    auto result = multi_sequence_alignment(hypo, separated_ref);
-//    auto end = std::chrono::high_resolution_clock::now();
-//    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-//    std::cout << "\ntime: " << duration.count() << std::endl;
+//    std::string file_name{"../data/Bdb001_all_tokens.csv"};
+//    std::vector<std::vector<std::string>> content = read_csv(file_name);
+//    std::vector<std::string> hypothesis = get_total_hypothesis(content, 2);
+//    std::vector<std::vector<std::string>> reference_with_label = get_total_reference_with_label(content, 0, 1);
+//    std::vector<std::string> reference = reference_with_label[0];
+//    std::vector<std::string> reference_label = reference_with_label[1];
+//
+//    auto result = align_with_auto_segment(hypothesis, reference, reference_label);
 //
 //    auto token_match_result = get_token_match_result(result);
 //    auto align_indexes = get_align_indexes(result);
-//    auto ref_original_index = get_ref_original_index(ref, ref_speaker_labels);
+//    auto ref_original_index = get_ref_original_index(reference, reference_label);
 //
-//    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/small_test.csv", result);
-//    write_csv_single_line<std::vector<std::string>>("../data/small_test.csv", token_match_result);
-//    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/small_test.csv", align_indexes);
-//    write_csv_multiple_line("../data/small_test.csv", ref_original_index);
+//    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/missing_token_output.csv", result);
+//    write_csv_single_line<std::vector<std::string>>("../data/missing_token_output.csv", token_match_result);
+//    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/missing_token_output.csv", align_indexes);
+//    write_csv_multiple_line("../data/missing_token_output.csv", ref_original_index);
+
+
+    std::vector<std::string> hypo{"ok", "I", "am", "a", "fish", "Are", "you", "Hello", "there", "How", "are", "you", "ok"};
+    std::vector<std::string> ref{"I", "am", "a", "fish", "ok", "Are", "you", "Hello", "there", "How", "are", "you"};
+    std::vector<std::string> ref_speaker_labels{"B", "B", "B", "B", "A", "C", "C", "D", "D", "E", "E", "E"};
+    std::vector<std::vector<std::string>> separated_ref = get_separate_sequence(ref, ref_speaker_labels);
+
+    auto result = align_with_auto_segment(hypo, ref, ref_speaker_labels);
+
+    auto token_match_result = get_token_match_result(result);
+    auto align_indexes = get_align_indexes(result);
+    auto ref_original_index = get_ref_original_index(ref, ref_speaker_labels);
+
+    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/small_test.csv", result);
+    write_csv_single_line<std::vector<std::string>>("../data/small_test.csv", token_match_result);
+    write_csv_multiple_line<std::vector<std::vector<int>>>("../data/small_test.csv", align_indexes);
+    write_csv_multiple_line("../data/small_test.csv", ref_original_index);
 
     return 0;
 }
