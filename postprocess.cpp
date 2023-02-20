@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
-#include "MSA.h"
-#include "PostProcess.h"
-#include "PreProcess.h"
+#include "msa.h"
+#include "postprocess.h"
+#include "preprocess.h"
 
 void write_csv(const std::string& file_name, const std::vector<std::vector<std::string>>& content) {
     std::ofstream file;

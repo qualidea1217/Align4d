@@ -4,4 +4,4 @@ project(MSA)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-O2")
 
-add_executable(MSA MSA.cpp Align.cpp PreProcess.cpp PreProcess.h MSA.h PostProcess.cpp PostProcess.h Align.h)
+add_executable(MSA msa.cpp align.cpp preprocess.cpp preprocess.h msa.h postprocess.cpp postprocess.h align.h)

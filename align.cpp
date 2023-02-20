@@ -3,10 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "Align.h"
-#include "MSA.h"
-#include "PreProcess.h"
-#include "PostProcess.h"
+#include "align.h"
+#include "msa.h"
+#include "preprocess.h"
+#include "postprocess.h"
 
 std::vector<std::vector<std::string>> align_without_segment(const std::vector<std::string>& hypothesis, const std::vector<std::string>& reference, const std::vector<std::string>& reference_label) {
     // get unique speaker labels

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <numeric>
 
-#include "MSA.h"
+#include "msa.h"
 
 int edit_distance(const std::string &token1, const std::string &token2) {
     /*
