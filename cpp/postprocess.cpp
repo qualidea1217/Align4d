@@ -54,7 +54,7 @@ std::vector<std::string> get_token_match_result(const std::vector<std::vector<st
     return token_match_result;
 }
 
-std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<std::string>>& final_result) {
+std::vector<std::vector<int>> get_align_indices(const std::vector<std::vector<std::string>>& final_result) {
     /*
      * Get the indexes representing the mapping from each token in the separated reference sequences to the hypothesis.
      *
@@ -65,7 +65,7 @@ std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<st
      * @param final_result: final output of the alignment with just the aligned sequences from multi_sequence_alignment
      * @return: indexes showing the mapping between tokens from separated reference to hypothesis
      */
-    std::vector<std::vector<int>> align_indexes;
+    std::vector<std::vector<int>> align_indices;
     std::vector<std::string> align_hypo = final_result[0];
     for (int i = 1; i < final_result.size(); ++i) {
         std::vector<int> indexes;
@@ -74,18 +74,18 @@ std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<st
                 indexes.emplace_back(align_hypo[j] != GAP ? j : -1);
             }
         }
-        align_indexes.emplace_back(indexes);
+        align_indices.emplace_back(indexes);
     }
-    return align_indexes;
+    return align_indices;
 }
 
-std::vector<std::vector<int>> get_ref_original_index(const std::vector<std::string>& reference, const std::vector<std::string>& speaker_labels) {
+std::vector<std::vector<int>> get_ref_original_indices(const std::vector<std::string>& reference, const std::vector<std::string>&speaker_labels) {
     std::vector<std::string> unique_speaker_labels = get_unique_speaker_label(speaker_labels);
-    std::vector<std::vector<int>> ref_original_index(unique_speaker_labels.size());
+    std::vector<std::vector<int>> ref_original_indices(unique_speaker_labels.size());
     for (int i = 0; i < reference.size(); ++i) {
-        ref_original_index[std::ranges::find(unique_speaker_labels, speaker_labels[i]) - unique_speaker_labels.begin()].emplace_back(i);
+        ref_original_indices[std::ranges::find(unique_speaker_labels, speaker_labels[i]) - unique_speaker_labels.begin()].emplace_back(i);
     }
-    return ref_original_index;
+    return ref_original_indices;
 }
 
 

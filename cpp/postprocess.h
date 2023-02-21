@@ -54,8 +54,8 @@ void write_csv(const std::string&, const std::vector<std::vector<std::string>>&)
 
 std::vector<std::string> get_token_match_result(const std::vector<std::vector<std::string>>&);
 
-std::vector<std::vector<int>> get_align_indexes(const std::vector<std::vector<std::string>>&);
+std::vector<std::vector<int>> get_align_indices(const std::vector<std::vector<std::string>>&);
 
-std::vector<std::vector<int>> get_ref_original_index(const std::vector<std::string>&, const std::vector<std::string>&);
+std::vector<std::vector<int>> get_ref_original_indices(const std::vector<std::string>&, const std::vector<std::string>&);
 
 #endif //MSA_POSTPROCESS_H

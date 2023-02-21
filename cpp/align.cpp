@@ -128,8 +128,8 @@ int main() {
 //    auto result = align_with_auto_segment(hypothesis, reference, reference_label);
 //
 //    auto token_match_result = get_token_match_result(result);
-//    auto align_indexes = get_align_indexes(result);
-//    auto ref_original_index = get_ref_original_index(reference, reference_label);
+//    auto align_indexes = get_align_indices(result);
+//    auto ref_original_index = get_ref_original_indices(reference, reference_label);
 //
 //    write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/missing_token_output.csv", result);
 //    write_csv_single_line<std::vector<std::string>>("../data/missing_token_output.csv", token_match_result);
@@ -145,8 +145,8 @@ int main() {
     auto result = align_with_auto_segment(hypo, ref, ref_speaker_labels);
 
     auto token_match_result = get_token_match_result(result);
-    auto align_indexes = get_align_indexes(result);
-    auto ref_original_index = get_ref_original_index(ref, ref_speaker_labels);
+    auto align_indexes = get_align_indices(result);
+    auto ref_original_index = get_ref_original_indices(ref, ref_speaker_labels);
 
     write_csv_multiple_line<std::vector<std::vector<std::string>>>("../data/small_test.csv", result);
     write_csv_single_line<std::vector<std::string>>("../data/small_test.csv", token_match_result);
