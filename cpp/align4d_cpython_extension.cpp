@@ -216,6 +216,30 @@ static PyObject *get_ref_original_indices(PyObject *self, PyObject *args) {
     return Py_BuildValue("O", py_ref_original_indices_list);
 }
 
+static PyObject *get_unique_speaker_label(PyObject *self, PyObject *args) {
+    PyObject *py_speaker_label_list;
+    if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &py_speaker_label_list)) {
+        return NULL;
+    }
+    std::vector<std::string> speaker_label = string_list_to_vector(py_speaker_label_list);
+    std::vector<std::string> unique_speaker_label = get_unique_speaker_label(speaker_label);
+    PyObject *py_unique_speaker_label_list = string_vector_to_list(unique_speaker_label);
+    return Py_BuildValue("O", py_unique_speaker_label_list);
+}
+
+static PyObject *get_aligned_hypo_speaker_label(PyObject *self, PyObject *args) {
+    PyObject *py_align_result;
+    PyObject *py_hypo_speaker_label_list;
+    if (!PyArg_ParseTuple(args, "O!O!", &PyList_Type, &py_align_result, &PyList_Type, &py_hypo_speaker_label_list)) {
+        return NULL;
+    }
+    std::vector<std::vector<std::string>> align_result = nested_str_list_to_vector(py_align_result);
+    std::vector<std::string> hypo_speaker_label = string_list_to_vector(py_hypo_speaker_label_list);
+    std::vector<std::string> aligned_hypo_speaker_label = get_aligned_hypo_speaker_label(align_result, hypo_speaker_label);
+    PyObject *py_aligned_hypo_speaker_label_list = string_vector_to_list(aligned_hypo_speaker_label);
+    return Py_BuildValue("O", py_aligned_hypo_speaker_label_list);
+}
+
 static PyMethodDef align4d_funcs[] = {
         {"align_without_segment",     align_without_segment,     METH_VARARGS, "multi-sequence alignment without segmentation."},
         {"align_with_auto_segment",   align_with_auto_segment,   METH_VARARGS, "multi-sequence alignment with automatic segmentation."},
@@ -223,6 +247,8 @@ static PyMethodDef align4d_funcs[] = {
         {"get_token_match_result",    get_token_match_result,    METH_VARARGS, "get token match result from alignment result."},
         {"get_align_indices",         get_align_indices,         METH_VARARGS, "get indices map from separated references to hypothesis."},
         {"get_ref_original_indices",  get_ref_original_indices,  METH_VARARGS, "get indices map from separated references to original combined reference."},
+        {"get_unique_speaker_label", get_unique_speaker_label, METH_VARARGS, "get unique speaker label from total speaker labels."},
+        {"get_aligned_hypo_speaker_label", get_aligned_hypo_speaker_label, METH_VARARGS, "get hypothesis speaker labels after alignment (with gap)."},
         {NULL, NULL, 0, NULL}
 };
 

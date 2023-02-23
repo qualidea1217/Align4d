@@ -2,6 +2,7 @@
 #include <chrono>
 #include <iostream>
 #include <numeric>
+#include <vector>
 
 #include "msa.h"
 

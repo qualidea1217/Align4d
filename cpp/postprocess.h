@@ -1,12 +1,12 @@
+#ifndef MSA_POSTPROCESS_H
+#define MSA_POSTPROCESS_H
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <set>
 #include <string>
 #include <vector>
-
-#ifndef MSA_POSTPROCESS_H
-#define MSA_POSTPROCESS_H
 
 template <typename T> void write_csv_single_line(const std::string& file_name, const T& row) {
     /*
@@ -57,5 +57,7 @@ std::vector<std::string> get_token_match_result(const std::vector<std::vector<st
 std::vector<std::vector<int>> get_align_indices(const std::vector<std::vector<std::string>>&);
 
 std::vector<std::vector<int>> get_ref_original_indices(const std::vector<std::string>&, const std::vector<std::string>&);
+
+std::vector<std::string> get_aligned_hypo_speaker_label(const std::vector<std::vector<std::string>>&, const std::vector<std::string>&);
 
 #endif //MSA_POSTPROCESS_H

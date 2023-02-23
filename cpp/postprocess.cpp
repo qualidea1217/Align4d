@@ -66,12 +66,12 @@ std::vector<std::vector<int>> get_align_indices(const std::vector<std::vector<st
      * @return: indexes showing the mapping between tokens from separated reference to hypothesis
      */
     std::vector<std::vector<int>> align_indices;
-    std::vector<std::string> align_hypo = final_result[0];
+    std::vector<std::string> aligned_hypo = final_result[0];
     for (int i = 1; i < final_result.size(); ++i) {
         std::vector<int> indexes;
-        for (int j = 0; j < align_hypo.size(); ++j) {
+        for (int j = 0; j < aligned_hypo.size(); ++j) {
             if (final_result[i][j] != GAP) {
-                indexes.emplace_back(align_hypo[j] != GAP ? j : -1);
+                indexes.emplace_back(aligned_hypo[j] != GAP ? j : -1);
             }
         }
         align_indices.emplace_back(indexes);
@@ -86,6 +86,15 @@ std::vector<std::vector<int>> get_ref_original_indices(const std::vector<std::st
         ref_original_indices[std::ranges::find(unique_speaker_labels, speaker_labels[i]) - unique_speaker_labels.begin()].emplace_back(i);
     }
     return ref_original_indices;
+}
+
+std::vector<std::string> get_aligned_hypo_speaker_label(const std::vector<std::vector<std::string>>& final_result, const std::vector<std::string>&hypo_speaker_label) {
+    const std::vector<std::string>& aligned_hypo = final_result[0];
+    std::vector<std::string> aligned_hypo_speaker_label(aligned_hypo.size());
+    for (int i = 0, j = 0; i < aligned_hypo.size(); ++i) {
+        aligned_hypo_speaker_label[i] = aligned_hypo[i] != GAP ? hypo_speaker_label[j++] : GAP;
+    }
+    return aligned_hypo_speaker_label;
 }
 
 

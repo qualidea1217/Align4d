@@ -1,10 +1,10 @@
+#ifndef MSA_MSA_H
+#define MSA_MSA_H
+
 #include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <numeric>
-
-#ifndef MSA_MSA_H
-#define MSA_MSA_H
 
 #define FULLY_MATCH_SCORE 2
 #define PARTIAL_MATCH_SCORE 1

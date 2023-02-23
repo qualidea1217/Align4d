@@ -1,11 +1,12 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <sstream>
-
 #ifndef MSA_PROCESSTEXT_H
 #define MSA_PROCESSTEXT_H
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <tuple>
+#include <vector>
 
 std::vector<std::vector<std::string>> read_csv(const std::string&);
 
