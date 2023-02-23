@@ -4,4 +4,4 @@
 /.idea
 /cpp/cmake-build-debug/
 /cpp/cmake-build-release/
-/cpp/data
+/cpp/data/
